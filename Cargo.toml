@@ -4,3 +4,7 @@ members = [
     "kv-storage"
 ]
 
+[workspace.package]
+edition = "2024"
+repository = "https://github.com/Abd002/raftkv"
+license = "MIT OR Apache-2.0"
