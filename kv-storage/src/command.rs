@@ -38,13 +38,12 @@ impl Command {
 
         let tag = u8::from_le_bytes(payload[0..1].try_into().unwrap());
 
-        if payload.len() < 5 {
-            return Err(Error::Corruption("payload len in < 5".to_string()));
-        }
-
         match tag {
             1 => {
                 let key_size = (u32::from_le_bytes(payload[1..5].try_into().unwrap())) as usize;
+                if payload.len() < 5 {
+                    return Err(Error::Corruption("payload len in < 5".to_string()));
+                }
 
                 if key_size + 5 > payload.len() {
                     return Err(Error::Corruption(
@@ -62,11 +61,12 @@ impl Command {
             }
             2 => {
                 let key_size = (u32::from_le_bytes(payload[1..5].try_into().unwrap())) as usize;
+                if payload.len() < 5 {
+                    return Err(Error::Corruption("payload len in < 5".to_string()));
+                }
 
                 if key_size + 5 != payload.len() {
-                    return Err(Error::Corruption(
-                        "key size larger that the payload".to_string(),
-                    ));
+                    return Err(Error::Corruption("length mismatch".to_string()));
                 }
                 let key = &payload[5..(key_size + 5)];
 

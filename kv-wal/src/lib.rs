@@ -4,6 +4,7 @@
 //!     Put:    [ tag = 1 : 1 byte ][ key length : 4 bytes, u32 LE ][ key ][ value: all remaining bytes ]
 //!     Delete: [ tag = 2 : 1 byte ][ key length : 4 bytes, u32 LE ][ key ]
 //!     this process done at kv-storage/src/command.rs
+//!     in raft it will user another schema -> later
 
 mod error;
 mod wal;
