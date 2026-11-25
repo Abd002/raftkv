@@ -1,7 +1,9 @@
 //! WAL [ checksum: 4 bytes ][ length: 4 bytes ][ payload: `length` bytes ]
 mod error;
+mod wal;
 
 pub use error::{Error, Result};
+pub use wal::Wal;
 
 use crc32fast::Hasher;
 
