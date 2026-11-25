@@ -61,6 +61,7 @@ name = "kv-storage"
 version = "0.1.0"
 dependencies = [
  "bytes",
+ "kv-wal",
 ]
 
 [[package]]
