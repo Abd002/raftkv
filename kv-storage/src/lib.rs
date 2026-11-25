@@ -9,3 +9,6 @@ pub use durable::DurableStorage;
 pub use error::{Error, Result};
 pub use mem::MemStorage;
 pub use storage::Storage;
+
+#[cfg(test)]
+mod conformance;
