@@ -4,7 +4,8 @@ pub type Result<T, E = Error> = std::result::Result<T, E>;
 pub enum Error {
     Io(std::io::Error),
     Corruption(String),
-    RecordTooLarge(String),
+    RecordTooLarge,
+    Poisoned,
 }
 
 impl std::fmt::Display for Error {
@@ -12,7 +13,8 @@ impl std::fmt::Display for Error {
         match self {
             Self::Io(error) => write!(f, "I/O: error {error}"),
             Self::Corruption(error) => write!(f, "Corruption: {error}"),
-            Self::RecordTooLarge(error) => write!(f, "Record is Too Large: {error}"),
+            Self::RecordTooLarge => write!(f, "Record is Too Large."),
+            Self::Poisoned => write!(f, "This data is Poisoned."),
         }
     }
 }

@@ -14,7 +14,7 @@ pub fn encode(payload: &[u8], buffer: &mut Vec<u8>) -> Result<()> {
     let len: u32 = payload.len() as u32;
 
     if len > MAX_RECORD_SIZE {
-        return Err(Error::RecordTooLarge("overloading".to_string()));
+        return Err(Error::RecordTooLarge);
     }
 
     let offset = buffer.len();
