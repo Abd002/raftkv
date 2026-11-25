@@ -7,12 +7,13 @@ use std::{
 
 #[derive(Debug)]
 pub struct Wal {
-    file: std::fs::File,
+    file: File,
     buf: Vec<u8>,
     poisoned: bool,
 }
 
 impl Wal {
+    /// Zero-filled tails left after a crash can cause WAL recovery to fail.
     pub fn open<A: AsRef<Path>>(path: A) -> Result<(Wal, Vec<Vec<u8>>)> {
         let new_file = !path.as_ref().exists();
 
@@ -37,13 +38,20 @@ impl Wal {
         let mut payloads: Vec<Vec<u8>> = Vec::new();
         let mut offset = 0;
         while let Some((payload, used)) = decode(&content[offset..])
-            .map_err(|e| Error::Corruption(format!("corrupt record at offset {offset}: {e}")))?
+            .map_err(|e| Error::Corruption(format!("Corruption: record at offset {offset}: {e}")))?
         {
             payloads.push(payload.to_vec());
             offset += used as usize;
         }
+        if offset < content.len() {
+            file.set_len(offset as u64)?;
+            file.sync_all()?;
 
-        file.set_len(offset as u64)?;
+            eprintln!(
+                "WAL recovery: truncated {} bytes from invalid tail",
+                content.len() - offset
+            );
+        }
 
         Ok((
             Wal {
@@ -61,10 +69,11 @@ impl Wal {
             return Err(Error::Poisoned);
         }
 
-        let offset = self.buf.len();
+        self.buf.clear();
+
         encode(payload, &mut self.buf)?;
         self.file
-            .write_all(&self.buf[offset..])
+            .write_all(&self.buf)
             .inspect_err(|_| self.poisoned = true)?;
         Ok(())
     }
