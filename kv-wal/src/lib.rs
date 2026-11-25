@@ -1,4 +1,10 @@
 //! WAL [ checksum: 4 bytes ][ length: 4 bytes ][ payload: `length` bytes ]
+//! this is the payload encode and decode
+//! payload is
+//!     Put:    [ tag = 1 : 1 byte ][ key length : 4 bytes, u32 LE ][ key ][ value: all remaining bytes ]
+//!     Delete: [ tag = 2 : 1 byte ][ key length : 4 bytes, u32 LE ][ key ]
+//!     this process done at kv-storage/src/command.rs
+
 mod error;
 mod wal;
 
@@ -10,6 +16,7 @@ use crc32fast::Hasher;
 const MAX_RECORD_SIZE: u32 = 64 << 20;
 const HEADER_SIZE: u32 = 8;
 
+/// encode the payload to store it in the storage
 pub fn encode(payload: &[u8], buffer: &mut Vec<u8>) -> Result<()> {
     let len: u32 = payload.len() as u32;
 
@@ -38,6 +45,7 @@ pub fn encode(payload: &[u8], buffer: &mut Vec<u8>) -> Result<()> {
     Ok(())
 }
 
+/// decode the payload from the storage
 pub fn decode(buffer: &[u8]) -> Result<Option<(&[u8], u32)>> {
     if (buffer.len() as u32) < HEADER_SIZE {
         return Ok(None);

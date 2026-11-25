@@ -8,3 +8,4 @@ repository.workspace = true
 [dependencies]
 bytes = "1.12.2"
 kv-wal = {workspace = true}
+tempfile = "3.27.0"

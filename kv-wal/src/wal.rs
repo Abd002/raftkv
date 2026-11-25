@@ -14,6 +14,8 @@ pub struct Wal {
 
 impl Wal {
     /// Zero-filled tails left after a crash can cause WAL recovery to fail.
+    /// configure the Wal
+    /// return all data in the file in a vector
     pub fn open<A: AsRef<Path>>(path: A) -> Result<(Wal, Vec<Vec<u8>>)> {
         let new_file = !path.as_ref().exists();
 
